@@ -43,7 +43,7 @@ namespace Gimpo.ComputeFunctions.Tests
         {
             IFunction function;
 
-            string[] names = [ "add", "subtract", "multiply", "divide" ];
+            string[] names = [ "add", "subtract", "multiply", "divide", "modulo" ];
 
             foreach (var name in names)
             {

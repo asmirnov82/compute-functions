@@ -60,7 +60,5 @@ namespace Gimpo.ComputeFunctions.Computation
                      
             return BinaryOperatorExecutor.Execute<TBinaryOperator>(x, y, resValidityBitmap);
         }
-
-        
     }
 }

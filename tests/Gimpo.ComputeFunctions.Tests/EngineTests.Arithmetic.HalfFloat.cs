@@ -75,6 +75,18 @@ namespace Gimpo.ComputeFunctions.Tests
 
             for (int i = 0; i < array.Length; i++)
                 array.Values[i].Should().Be(left[i] / right[i]);
+
+            //Act Modulo
+            result = Engine.Modulo(arg1, arg2);
+
+            //Assert
+            result.Data.DataType.TypeId.Should().Be(Apache.Arrow.Types.ArrowTypeId.HalfFloat);
+            result.Length.Should().Be(left.Length);
+
+            array = (HalfFloatArray)result;
+
+            for (int i = 0; i < array.Length; i++)
+                array.Values[i].Should().Be(left[i] % right[i]);
         }
 
         [Fact]
@@ -142,6 +154,18 @@ namespace Gimpo.ComputeFunctions.Tests
 
             for (int i = 0; i < array.Length; i++)
                 array.Values[i].Should().Be((double)left[i] / right[i]);
+
+            //Act Modulo
+            result = Engine.Modulo(arg1, arg2);
+
+            //Assert
+            result.Data.DataType.TypeId.Should().Be(Apache.Arrow.Types.ArrowTypeId.Double);
+            result.Length.Should().Be(left.Length);
+
+            array = (DoubleArray)result;
+
+            for (int i = 0; i < array.Length; i++)
+                array.Values[i].Should().Be((double)left[i] % right[i]);
         }
 
         [Fact]
@@ -209,6 +233,18 @@ namespace Gimpo.ComputeFunctions.Tests
 
             for (int i = 0; i < array.Length; i++)
                 array.Values[i].Should().Be(left[i] / (Half)right[i]);
+
+            //Act Modulo
+            result = Engine.Modulo(arg1, arg2);
+
+            //Assert
+            result.Data.DataType.TypeId.Should().Be(Apache.Arrow.Types.ArrowTypeId.HalfFloat);
+            result.Length.Should().Be(left.Length);
+
+            array = (HalfFloatArray)result;
+
+            for (int i = 0; i < array.Length; i++)
+                array.Values[i].Should().Be(left[i] % (Half)right[i]);
         }
     }
 }

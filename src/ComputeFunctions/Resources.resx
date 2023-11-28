@@ -126,4 +126,7 @@
   <data name="FunctionIncorrectAmountOfArguments" xml:space="preserve">
     <value>Incorrect amount of compute function arguments.</value>
   </data>
+  <data name="FunctionWithNameAlreadyExistsInTheRegistry" xml:space="preserve">
+    <value>Function with '{0}' name already exists in the registry</value>
+  </data>
 </root>

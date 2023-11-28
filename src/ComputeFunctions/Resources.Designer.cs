@@ -86,5 +86,14 @@ namespace Gimpo.ComputeFunctions {
                 return ResourceManager.GetString("FunctionIncorrectAmountOfArguments", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Function with &apos;{0}&apos; name already exists in the registry.
+        /// </summary>
+        internal static string FunctionWithNameAlreadyExistsInTheRegistry {
+            get {
+                return ResourceManager.GetString("FunctionWithNameAlreadyExistsInTheRegistry", resourceCulture);
+            }
+        }
     }
 }

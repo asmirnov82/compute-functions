@@ -7,7 +7,7 @@ For example:
 
 ## Invoking functions
 
-Compute functions can be invoked by name using 'public static Datum CallFunction(string functionName, IReadOnlyList<Datum> args)' method of 'Gimpo.ComputeFunctions.Engine' or by getting ot from a global registry first.
+Compute functions can be invoked by name using `public static Datum CallFunction(string functionName, IReadOnlyList<Datum> args)` method of `Gimpo.ComputeFunctions.Engine` or by getting ot from a global registry first.
 
 For example:
 ```C#

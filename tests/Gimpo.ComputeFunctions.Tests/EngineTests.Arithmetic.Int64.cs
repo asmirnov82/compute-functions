@@ -74,6 +74,18 @@ namespace Gimpo.ComputeFunctions.Tests
 
             for (int i = 0; i < array.Length; i++)
                 array.Values[i].Should().Be(left[i] / right[i]);
+
+            //Act Modulo
+            result = Engine.Modulo(arg1, arg2);
+
+            //Assert
+            result.Data.DataType.TypeId.Should().Be(Apache.Arrow.Types.ArrowTypeId.Int64);
+            result.Length.Should().Be(left.Length);
+
+            array = (Int64Array)result;
+
+            for (int i = 0; i < array.Length; i++)
+                array.Values[i].Should().Be(left[i] % right[i]);
         }
     }
 }
