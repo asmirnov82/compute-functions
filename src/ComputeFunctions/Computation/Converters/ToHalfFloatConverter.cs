@@ -18,212 +18,124 @@ namespace Gimpo.ComputeFunctions.Computation.Converters
         IConverter<Half, ushort>
     {
         #region IConverter<Half, long>
-        static bool IConverter<Half, long>.CanVectorize => false;
+        static bool IConverter<Half, long>.SupportVectorization => false;
 
         public static Half Convert(long value)
         {
             return (Half)value;
         }
 
-        public static Vector128<Half> Convert(Vector128<long> vector)
-        {
-            throw new NotSupportedException();
-        }
-
-        public static Vector256<Half> Convert(Vector256<long> vector)
-        {
-            throw new NotSupportedException();
-        }
-
+        public static Vector128<Half> Convert(Vector128<long> vector) => throw new NotSupportedException();
+        public static Vector256<Half> Convert(Vector256<long> vector) => throw new NotSupportedException();
 #if NET8_0_OR_GREATER
-        public static Vector512<Half> Convert(Vector512<long> vector)
-        {
-            throw new NotSupportedException();
-        }
+        public static Vector512<Half> Convert(Vector512<long> vector) => throw new NotSupportedException();
 #endif
         #endregion
 
         #region IConverter<Half, ulong>
-        static bool IConverter<Half, ulong>.CanVectorize => false;
+        static bool IConverter<Half, ulong>.SupportVectorization => false;
 
         public static Half Convert(ulong value)
         {
             return (Half)value;
         }
 
-        public static Vector128<Half> Convert(Vector128<ulong> vector)
-        {
-            throw new NotSupportedException();
-        }
-
-        public static Vector256<Half> Convert(Vector256<ulong> vector)
-        {
-            throw new NotSupportedException();
-        }
+        public static Vector128<Half> Convert(Vector128<ulong> vector) => throw new NotSupportedException();
+        public static Vector256<Half> Convert(Vector256<ulong> vector) => throw new NotSupportedException();
 
 #if NET8_0_OR_GREATER
-        public static Vector512<Half> Convert(Vector512<ulong> vector)
-        {
-            throw new NotSupportedException();
-        }
+        public static Vector512<Half> Convert(Vector512<ulong> vector) => throw new NotSupportedException();
 #endif
-        #endregion
+#endregion
 
         #region IConverter<Half, int>
-        static bool IConverter<Half, int>.CanVectorize => false;
+        static bool IConverter<Half, int>.SupportVectorization => false;
 
         public static Half Convert(int value)
         {
             return (Half)value;
         }
 
-        public static Vector128<Half> Convert(Vector128<int> vector)
-        {
-            throw new NotSupportedException();
-        }
-
-        public static Vector256<Half> Convert(Vector256<int> vector)
-        {
-            throw new NotSupportedException();
-        }
-
+        public static Vector128<Half> Convert(Vector128<int> vector) => throw new NotSupportedException();
+        public static Vector256<Half> Convert(Vector256<int> vector) => throw new NotSupportedException();
 #if NET8_0_OR_GREATER
-        public static Vector512<Half> Convert(Vector512<int> vector)
-        {
-            throw new NotSupportedException();
-        }
+        public static Vector512<Half> Convert(Vector512<int> vector) => throw new NotSupportedException();
 #endif
         #endregion
 
         #region IConverter<Half, uint>
 
-        static bool IConverter<Half, uint>.CanVectorize => false;
+        static bool IConverter<Half, uint>.SupportVectorization => false;
 
         public static Half Convert(uint value)
         {
             return (Half)value;
         }
 
-        public static Vector128<Half> Convert(Vector128<uint> vector)
-        {
-            throw new NotSupportedException();
-        }
-
-        public static Vector256<Half> Convert(Vector256<uint> vector)
-        {
-            throw new NotSupportedException();
-        }
-
+        public static Vector128<Half> Convert(Vector128<uint> vector) => throw new NotSupportedException();
+        public static Vector256<Half> Convert(Vector256<uint> vector) => throw new NotSupportedException();
 #if NET8_0_OR_GREATER
-        public static Vector512<Half> Convert(Vector512<uint> vector)
-        {
-            throw new NotSupportedException();
-        }
+        public static Vector512<Half> Convert(Vector512<uint> vector) => throw new NotSupportedException();
 #endif
         #endregion
 
-
         #region IConverter<Half, sbyte>
-        static bool IConverter<Half, sbyte>.CanVectorize => false;
+        static bool IConverter<Half, sbyte>.SupportVectorization => false;
 
         public static Half Convert(sbyte value)
         {
             return (Half)value;
         }
 
-        public static Vector128<Half> Convert(Vector128<sbyte> vector)
-        {
-            throw new NotSupportedException();
-        }
-
-        public static Vector256<Half> Convert(Vector256<sbyte> vector)
-        {
-            throw new NotSupportedException();
-        }
-
+        public static Vector128<Half> Convert(Vector128<sbyte> vector) => throw new NotSupportedException();
+        public static Vector256<Half> Convert(Vector256<sbyte> vector) => throw new NotSupportedException();
 #if NET8_0_OR_GREATER
-        public static Vector512<Half> Convert(Vector512<sbyte> vector)
-        {
-            throw new NotSupportedException();
-        }
+        public static Vector512<Half> Convert(Vector512<sbyte> vector) => throw new NotSupportedException();
 #endif
         #endregion
 
         #region IConverter<Half, byte>
-        static bool IConverter<Half, byte>.CanVectorize => false;
+        static bool IConverter<Half, byte>.SupportVectorization => false;
 
         public static Half Convert(byte value)
         {
             return (Half)value;
         }
 
-        public static Vector128<Half> Convert(Vector128<byte> vector)
-        {
-            throw new NotSupportedException();
-        }
-
-        public static Vector256<Half> Convert(Vector256<byte> vector)
-        {
-            throw new NotSupportedException();
-        }
-
+        public static Vector128<Half> Convert(Vector128<byte> vector) => throw new NotSupportedException();
+        public static Vector256<Half> Convert(Vector256<byte> vector) => throw new NotSupportedException();
 #if NET8_0_OR_GREATER
-        public static Vector512<Half> Convert(Vector512<byte> vector)
-        {
-            throw new NotSupportedException();
-        }
+        public static Vector512<Half> Convert(Vector512<byte> vector)  => throw new NotSupportedException();
 #endif
         #endregion
 
         #region IConverter<Half, short>
-        static bool IConverter<Half, short>.CanVectorize => false;
+        static bool IConverter<Half, short>.SupportVectorization => false;
 
         public static Half Convert(short value)
         {
             return (Half)value;
         }
 
-        public static Vector128<Half> Convert(Vector128<short> vector)
-        {
-            throw new NotSupportedException();
-        }
-
-        public static Vector256<Half> Convert(Vector256<short> vector)
-        {
-            throw new NotSupportedException();
-        }
-
+        public static Vector128<Half> Convert(Vector128<short> vector) => throw new NotSupportedException();
+        public static Vector256<Half> Convert(Vector256<short> vector) => throw new NotSupportedException();
 #if NET8_0_OR_GREATER
-        public static Vector512<Half> Convert(Vector512<short> vector)
-        {
-            throw new NotSupportedException();
-        }
+        public static Vector512<Half> Convert(Vector512<short> vector) => throw new NotSupportedException();
 #endif
         #endregion
 
         #region IConverter<Half, ushort>
-        static bool IConverter<Half, ushort>.CanVectorize => false;
+        static bool IConverter<Half, ushort>.SupportVectorization => false;
 
         public static Half Convert(ushort value)
         {
             return (Half)value;
         }
 
-        public static Vector128<Half> Convert(Vector128<ushort> vector)
-        {
-            throw new NotSupportedException();
-        }
-
-        public static Vector256<Half> Convert(Vector256<ushort> vector)
-        {
-            throw new NotSupportedException();
-        }
-
+        public static Vector128<Half> Convert(Vector128<ushort> vector) => throw new NotSupportedException();
+        public static Vector256<Half> Convert(Vector256<ushort> vector) => throw new NotSupportedException();
 #if NET8_0_OR_GREATER
-        public static Vector512<Half> Convert(Vector512<ushort> vector)
-        {
-            throw new NotSupportedException();
-        }
+        public static Vector512<Half> Convert(Vector512<ushort> vector)  => throw new NotSupportedException();
 #endif
         #endregion
 

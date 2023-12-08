@@ -10,7 +10,7 @@ namespace Gimpo.ComputeFunctions.Computation.Operators
 {
     internal readonly struct DivideOperator : IBinaryOperator
     {
-        public static bool CanVectorize => true;
+        public static bool SupportVectorization => true;
 
         public static bool CanRightArgumentBeZero => false;
 

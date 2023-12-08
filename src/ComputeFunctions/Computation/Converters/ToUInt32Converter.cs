@@ -8,31 +8,37 @@ using System.Threading.Tasks;
 namespace Gimpo.ComputeFunctions.Computation.Converters
 {
     internal readonly struct ToUInt32Converter :
+        IConverter<uint, ushort>,
         IConverter<uint, byte>,
         IWidener<uint, ushort>
     {
+        #region  IConverter<uint, ushort>
+        static bool IConverter<uint, ushort>.SupportVectorization => false;
+
+        public static uint Convert(ushort value)
+        {
+            return value;
+        }
+
+        public static Vector128<uint> Convert(Vector128<ushort> vector) => throw new NotSupportedException();
+        public static Vector256<uint> Convert(Vector256<ushort> vector) => throw new NotSupportedException();
+#if NET8_0_OR_GREATER
+        public static Vector512<uint> Convert(Vector512<ushort> vector) => throw new NotSupportedException();
+#endif
+        #endregion
+
         #region  IConverter<uint, byte>
-        public static bool CanVectorize => false;
+        static bool IConverter<uint, byte>.SupportVectorization => false;
 
         public static uint Convert(byte value)
         {
             return value;
         }
 
-        public static Vector128<uint> Convert(Vector128<byte> vector)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static Vector256<uint> Convert(Vector256<byte> vector)
-        {
-            throw new NotImplementedException();
-        }
+        public static Vector128<uint> Convert(Vector128<byte> vector) => throw new NotSupportedException();
+        public static Vector256<uint> Convert(Vector256<byte> vector) => throw new NotSupportedException();
 #if NET8_0_OR_GREATER
-        public static Vector512<uint> Convert(Vector512<byte> vector)
-        {
-            throw new NotImplementedException();
-        }
+        public static Vector512<uint> Convert(Vector512<byte> vector) => throw new NotSupportedException();
 #endif
         #endregion
 

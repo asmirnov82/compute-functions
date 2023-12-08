@@ -8,9 +8,26 @@ using System.Threading.Tasks;
 namespace Gimpo.ComputeFunctions.Computation.Converters
 {
     internal readonly struct ToInt16Converter :
+        IConverter<short, sbyte>,
         IWidener<short, sbyte>,
         IWidener<short, byte>
     {
+        #region IConverter<short, sbyte>
+        static bool IConverter<short, sbyte>.SupportVectorization => false;
+
+        public static short Convert(sbyte value)
+        {
+            return value;
+        }
+                
+        public static Vector128<short> Convert(Vector128<sbyte> vector) => throw new NotImplementedException();
+        public static Vector256<short> Convert(Vector256<sbyte> vector) => throw new NotImplementedException();
+
+#if NET8_0_OR_GREATER
+        public static Vector512<short> Convert(Vector512<sbyte> vector) => throw new NotImplementedException();
+#endif
+        #endregion
+
         #region IWidener<short, sbyte>
         public static short Widen(sbyte value)
         {
@@ -33,7 +50,7 @@ namespace Gimpo.ComputeFunctions.Computation.Converters
             return Vector512.Widen(vector);
         }
 #endif
-        #endregion
+#endregion
 
         #region IWidener<short, byte>
         public static short Widen(byte value)
@@ -60,6 +77,6 @@ namespace Gimpo.ComputeFunctions.Computation.Converters
             return (Vector512.AsInt16(Lower), Vector512.AsInt16(Upper));
         }
 #endif
-        #endregion
+#endregion
     }
 }

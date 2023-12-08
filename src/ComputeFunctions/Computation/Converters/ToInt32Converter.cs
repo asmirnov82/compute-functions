@@ -10,82 +10,68 @@ namespace Gimpo.ComputeFunctions.Computation.Converters
     internal readonly struct ToInt32Converter :
         IConverter<int, sbyte>,
         IConverter<int, byte>,
+        IConverter<int, short>,
         IConverter<int, ushort>,
         IWidener<int, short>,
         IWidener<int, ushort>
     {
         #region IConverter<int, sbyte>
-        static bool IConverter<int, sbyte>.CanVectorize => false;
+        static bool IConverter<int, sbyte>.SupportVectorization => false;
 
         public static int Convert(sbyte value)
         {
             return value;
         }
 
-        public static Vector128<int> Convert(Vector128<sbyte> vector)
-        {
-            throw new NotSupportedException();
-        }
-
-        public static Vector256<int> Convert(Vector256<sbyte> vector)
-        {
-            throw new NotSupportedException();
-        }
+        public static Vector128<int> Convert(Vector128<sbyte> vector) => throw new NotSupportedException();
+        public static Vector256<int> Convert(Vector256<sbyte> vector) => throw new NotSupportedException();
 #if NET8_0_OR_GREATER
-        public static Vector512<int> Convert(Vector512<sbyte> vector)
-        {
-            throw new NotSupportedException();
-        }
+        public static Vector512<int> Convert(Vector512<sbyte> vector)  => throw new NotSupportedException();
 #endif
         #endregion
 
         #region IConverter<int, byte>
-        static bool IConverter<int, byte>.CanVectorize => false;
+        static bool IConverter<int, byte>.SupportVectorization => false;
 
         public static int Convert(byte value)
         {
             return value;
         }
 
-        public static Vector128<int> Convert(Vector128<byte> vector)
-        {
-            throw new NotSupportedException();
-        }
-
-        public static Vector256<int> Convert(Vector256<byte> vector)
-        {
-            throw new NotSupportedException();
-        }
+        public static Vector128<int> Convert(Vector128<byte> vector) => throw new NotSupportedException();
+        public static Vector256<int> Convert(Vector256<byte> vector) => throw new NotSupportedException();
 #if NET8_0_OR_GREATER
-        public static Vector512<int> Convert(Vector512<byte> vector)
-        {
-            throw new NotSupportedException();
-        }
+        public static Vector512<int> Convert(Vector512<byte> vector) => throw new NotSupportedException();
 #endif
         #endregion
 
-        #region IConverter<int, ushort>
-        static bool IConverter<int, ushort>.CanVectorize => false;
+        #region IConverter<int, short>
+        static bool IConverter<int, short>.SupportVectorization => false;
+
+        public static int Convert(short value)
+        {
+            return value;
+        }
+
+        public static Vector128<int> Convert(Vector128<short> vector) => throw new NotSupportedException();
+        public static Vector256<int> Convert(Vector256<short> vector) => throw new NotSupportedException();
+#if NET8_0_OR_GREATER
+        public static Vector512<int> Convert(Vector512<short> vector) => throw new NotSupportedException();
+#endif
+    #endregion
+
+    #region IConverter<int, ushort>
+    static bool IConverter<int, ushort>.SupportVectorization => false;
 
         public static int Convert(ushort value)
         {
             return value;
         }
 
-        public static Vector128<int> Convert(Vector128<ushort> vector)
-        {
-            throw new NotSupportedException();
-        }
-
-        public static Vector256<int> Convert(Vector256<ushort> vector)
-        {
-            throw new NotSupportedException();
-        }
+        public static Vector128<int> Convert(Vector128<ushort> vector) => throw new NotSupportedException();
+        public static Vector256<int> Convert(Vector256<ushort> vector) => throw new NotSupportedException();
 #if NET8_0_OR_GREATER
-        public static Vector512<int> Convert(Vector512<ushort> vector)
-        {
-            throw new NotSupportedException();
-        }
+        public static Vector512<int> Convert(Vector512<ushort> vector) => throw new NotSupportedException();
 #endif
         #endregion
 

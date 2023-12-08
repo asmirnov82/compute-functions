@@ -8,57 +8,53 @@ using System.Threading.Tasks;
 namespace Gimpo.ComputeFunctions.Computation.Converters
 {
     internal readonly struct ToUInt64Converter :
+        IConverter<ulong, uint>,
         IConverter<ulong, ushort>,
         IConverter<ulong, byte>,
         IWidener<ulong, uint>
     {
+        #region IConverter<ulong, uint>
+        static bool IConverter<ulong, uint>.SupportVectorization => false;
+
+        public static ulong Convert(uint value)
+        {
+            return value;
+        }
+
+        public static Vector128<ulong> Convert(Vector128<uint> vector) => throw new NotSupportedException();
+        public static Vector256<ulong> Convert(Vector256<uint> vector) => throw new NotSupportedException();
+#if NET8_0_OR_GREATER
+        public static Vector512<ulong> Convert(Vector512<uint> vector) => throw new NotSupportedException();
+#endif
+        #endregion
+
         #region IConverter<ulong, ushort>
-        static bool IConverter<ulong, ushort>.CanVectorize => false;
+        static bool IConverter<ulong, ushort>.SupportVectorization => false;
 
         public static ulong Convert(ushort value)
         {
             return value;
         }
 
-        public static Vector128<ulong> Convert(Vector128<ushort> vector)
-        {
-            throw new NotSupportedException();
-        }
-
-        public static Vector256<ulong> Convert(Vector256<ushort> vector)
-        {
-            throw new NotSupportedException();
-        }
+        public static Vector128<ulong> Convert(Vector128<ushort> vector) => throw new NotSupportedException();
+        public static Vector256<ulong> Convert(Vector256<ushort> vector) => throw new NotSupportedException();
 #if NET8_0_OR_GREATER
-        public static Vector512<ulong> Convert(Vector512<ushort> vector)
-        {
-            throw new NotSupportedException();
-        }
+        public static Vector512<ulong> Convert(Vector512<ushort> vector) => throw new NotSupportedException();
 #endif
         #endregion
 
         #region IConverter<ulong, byte>
-        static bool IConverter<ulong, byte>.CanVectorize => false;
+        static bool IConverter<ulong, byte>.SupportVectorization => false;
 
         public static ulong Convert(byte value)
         {
             return value;
         }
 
-        public static Vector128<ulong> Convert(Vector128<byte> vector)
-        {
-            throw new NotSupportedException();
-        }
-
-        public static Vector256<ulong> Convert(Vector256<byte> vector)
-        {
-            throw new NotSupportedException();
-        }
+        public static Vector128<ulong> Convert(Vector128<byte> vector) => throw new NotSupportedException();
+        public static Vector256<ulong> Convert(Vector256<byte> vector) => throw new NotSupportedException();
 #if NET8_0_OR_GREATER
-        public static Vector512<ulong> Convert(Vector512<byte> vector)
-        {
-            throw new NotSupportedException();
-        }
+        public static Vector512<ulong> Convert(Vector512<byte> vector) => throw new NotSupportedException();
 #endif
         #endregion
 

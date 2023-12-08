@@ -55,6 +55,16 @@ var array2 = new Int32Array.Builder()
 
 IArrowArray = Engine.Add(array1, array2);
 ```
+or
+```C#
+var array1 = new Int32Array.Builder()
+                .AppendRange(new[] { 0, 1, 2 })
+                .Build();
+
+var scalar = Scalar.Create(32)
+
+IArrowArray = Engine.Add(array1, scalar);
+```
 
 ## Common numeric type
 
@@ -75,4 +85,12 @@ For example:
 | float, double     | double               |
 | float, float      | float                |
 
+## Element-wise binary functions
 
+All element-wise binary functions accept both arrays and scalars as input.
+
+Binary functions have the following semantics (which is sometimes called “broadcasting” in other systems such as Pandas):
+
+*(array, array)* inputs produce an array output (and both inputs must be of the same length)
+
+*(scalar, array)* and *(array, scalar)* produce an array output. The scalar input is handled as if it were an array of the same length N as the other input, with the same value repeated N times.

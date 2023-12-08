@@ -21,8 +21,8 @@ namespace Gimpo.ComputeFunctions.Computation
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static abstract (Vector256<TResult> Lower, Vector256<TResult> Upper) Widen(Vector256<T> vector);
-#if NET8_0_OR_GREATER
 
+#if NET8_0_OR_GREATER
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static abstract (Vector512<TResult> Lower, Vector512<TResult> Upper) Widen(Vector512<T> vector);
 #endif

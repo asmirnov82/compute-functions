@@ -33,6 +33,12 @@ namespace Gimpo.ComputeFunctions
             _data = table;
         }
 
+        public Datum(Scalar scalar)
+        {
+            Kind = DatumKind.Scalar;
+            _data = scalar;
+        }
+
         /// <summary>
         /// Retrieve the stored array as Array.
         /// </summary>
@@ -44,6 +50,20 @@ namespace Gimpo.ComputeFunctions
                     ThrowHelper.Throw_DatumIncorrectVariantAccess();
 
                 return (IArrowArray)_data;
+            }
+        }
+
+        /// <summary>
+        /// Retrieve the stored scalar as Scalar.
+        /// </summary>
+        public Scalar Scalar
+        {
+            get
+            {
+                if (Kind != DatumKind.Scalar)
+                    ThrowHelper.Throw_DatumIncorrectVariantAccess();
+
+                return (Scalar)_data;
             }
         }
 

@@ -8,9 +8,12 @@ using System.Threading.Tasks;
 namespace Gimpo.ComputeFunctions.Computation.Converters
 {
     internal readonly struct ToDoubleConverter :
+        IConverter<double, float>,
+        IConverter<double, Half>,
         IConverter<double, long>,
         IConverter<double, ulong>,
-        IConverter<double, Half>,
+        IConverter<double, int>,
+        IConverter<double, uint>,
         IConverter<double, short>,
         IConverter<double, ushort>,
         IConverter<double, sbyte>,
@@ -19,33 +22,39 @@ namespace Gimpo.ComputeFunctions.Computation.Converters
         IWidener<double, int>,
         IWidener<double, uint>
     {
+        #region IConverter<double, float>
+        static bool IConverter<double, float>.SupportVectorization => false;
+
+        public static double Convert(float value)
+        {
+            return (double)value;
+        }
+
+        public static Vector128<double> Convert(Vector128<float> vector) => throw new NotSupportedException();
+        public static Vector256<double> Convert(Vector256<float> vector) => throw new NotSupportedException();
+
+#if NET8_0_OR_GREATER
+        public static Vector512<double> Convert(Vector512<float> vector) => throw new NotSupportedException();
+#endif
+        #endregion
+
         #region IConverter<double, Half>
-        static bool IConverter<double, Half>.CanVectorize => false;
+        static bool IConverter<double, Half>.SupportVectorization => false;
 
         public static double Convert(Half value)
         {
             return (double)value;
         }
 
-        public static Vector128<double> Convert(Vector128<Half> vector)
-        {
-            throw new NotSupportedException();
-        }
-
-        public static Vector256<double> Convert(Vector256<Half> vector)
-        {
-            throw new NotSupportedException();
-        }
+        public static Vector128<double> Convert(Vector128<Half> vector) => throw new NotSupportedException();
+        public static Vector256<double> Convert(Vector256<Half> vector) => throw new NotSupportedException();
 #if NET8_0_OR_GREATER
-        public static Vector512<double> Convert(Vector512<Half> vector)
-        {
-            throw new NotSupportedException();
-        }
+        public static Vector512<double> Convert(Vector512<Half> vector) => throw new NotSupportedException();
 #endif
         #endregion
 
         #region IConverter<double, long>
-        static bool IConverter<double, long>.CanVectorize => true;
+        static bool IConverter<double, long>.SupportVectorization => true;
 
         public static double Convert(long value)
         {
@@ -70,7 +79,7 @@ namespace Gimpo.ComputeFunctions.Computation.Converters
         #endregion
 
         #region IConverter<double, ulong>
-        static bool IConverter<double, ulong>.CanVectorize => true;
+        static bool IConverter<double, ulong>.SupportVectorization => true;
 
         public static double Convert(ulong value)
         {
@@ -94,108 +103,102 @@ namespace Gimpo.ComputeFunctions.Computation.Converters
 #endif
         #endregion
 
+        #region IConverter<double, int>
+        static bool IConverter<double, int>.SupportVectorization => false;
+
+        public static double Convert(int value)
+        {
+            return value;
+        }
+
+        public static Vector128<double> Convert(Vector128<int> vector) => throw new NotSupportedException();
+        
+        public static Vector256<double> Convert(Vector256<int> vector) => throw new NotSupportedException();
+
+#if NET8_0_OR_GREATER
+        public static Vector512<double> Convert(Vector512<int> vector) => throw new NotSupportedException();
+#endif
+        #endregion
+
+        #region IConverter<double, uint>
+        static bool IConverter<double, uint>.SupportVectorization => false;
+
+        public static double Convert(uint value)
+        {
+            return value;
+        }
+
+        public static Vector128<double> Convert(Vector128<uint> vector) => throw new NotSupportedException();
+        public static Vector256<double> Convert(Vector256<uint> vector) => throw new NotSupportedException();
+
+#if NET8_0_OR_GREATER
+        public static Vector512<double> Convert(Vector512<uint> vector) => throw new NotSupportedException();
+#endif
+        #endregion
+
         #region IConverter<double, short>
-        static bool IConverter<double, short>.CanVectorize => false;
+        static bool IConverter<double, short>.SupportVectorization => false;
 
         public static double Convert(short value)
         {
             return value;
         }
 
-        public static Vector128<double> Convert(Vector128<short> vector)
-        {
-            throw new NotSupportedException();
-        }
-
-        public static Vector256<double> Convert(Vector256<short> vector)
-        {
-            throw new NotSupportedException();
-        }
+        public static Vector128<double> Convert(Vector128<short> vector) => throw new NotSupportedException();
+        public static Vector256<double> Convert(Vector256<short> vector) => throw new NotSupportedException();
 #if NET8_0_OR_GREATER
-        public static Vector512<double> Convert(Vector512<short> vector)
-        {
-            throw new NotSupportedException();
-        }
+        public static Vector512<double> Convert(Vector512<short> vector) => throw new NotSupportedException();
 #endif
         #endregion
 
         #region IConverter<double, ushort>
-        static bool IConverter<double, ushort>.CanVectorize => false;
+        static bool IConverter<double, ushort>.SupportVectorization => false;
 
         public static double Convert(ushort value)
         {
             return value;
         }
 
-        public static Vector128<double> Convert(Vector128<ushort> vector)
-        {
-            throw new NotSupportedException();
-        }
-
-        public static Vector256<double> Convert(Vector256<ushort> vector)
-        {
-            throw new NotSupportedException();
-        }
+        public static Vector128<double> Convert(Vector128<ushort> vector) => throw new NotSupportedException();
+        public static Vector256<double> Convert(Vector256<ushort> vector) => throw new NotSupportedException();
 #if NET8_0_OR_GREATER
-        public static Vector512<double> Convert(Vector512<ushort> vector)
-        {
-            throw new NotSupportedException();
-        }
+        public static Vector512<double> Convert(Vector512<ushort> vector) => throw new NotSupportedException();
 #endif
         #endregion
 
         #region IConverter<double, sbyte>
-        static bool IConverter<double, sbyte>.CanVectorize => false;
+        static bool IConverter<double, sbyte>.SupportVectorization => false;
 
         public static double Convert(sbyte value)
         {
             return value;
         }
 
-        public static Vector128<double> Convert(Vector128<sbyte> vector)
-        {
-            throw new NotSupportedException();
-        }
+        public static Vector128<double> Convert(Vector128<sbyte> vector) => throw new NotSupportedException();
+        public static Vector256<double> Convert(Vector256<sbyte> vector) => throw new NotSupportedException();
 
-        public static Vector256<double> Convert(Vector256<sbyte> vector)
-        {
-            throw new NotSupportedException();
-        }
 #if NET8_0_OR_GREATER
-        public static Vector512<double> Convert(Vector512<sbyte> vector)
-        {
-            throw new NotSupportedException();
-        }
+        public static Vector512<double> Convert(Vector512<sbyte> vector) => throw new NotSupportedException();
 #endif
         #endregion
 
         #region IConverter<double, byte>
-        static bool IConverter<double, byte>.CanVectorize => false;
+        static bool IConverter<double, byte>.SupportVectorization => false;
 
         public static double Convert(byte value)
         {
             return value;
         }
 
-        public static Vector128<double> Convert(Vector128<byte> vector)
-        {
-            throw new NotSupportedException();
-        }
-
-        public static Vector256<double> Convert(Vector256<byte> vector)
-        {
-            throw new NotSupportedException();
-        }
+        public static Vector128<double> Convert(Vector128<byte> vector) => throw new NotSupportedException();
+        public static Vector256<double> Convert(Vector256<byte> vector) => throw new NotSupportedException();
 #if NET8_0_OR_GREATER
-        public static Vector512<double> Convert(Vector512<byte> vector)
-        {
-            throw new NotSupportedException();
-        }
+        public static Vector512<double> Convert(Vector512<byte> vector) => throw new NotSupportedException();
 #endif
-        #endregion
+    #endregion
 
-        #region IWidener<double, float>
-        public static double Widen(float value)
+    #region IWidener<double, float>
+    public static double Widen(float value)
         {
             return value;
         }

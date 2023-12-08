@@ -49,29 +49,24 @@ namespace Gimpo.ComputeFunctions
                 ThrowHelper.Throw_FunctionWithNameAlreadyExistsInTheRegistry(function.Name, nameof(function));
         }
 
-        public static IArrowArray Add (IArrowArray arg1, IArrowArray arg2)
-        {
-            return AddFunction.Execute(arg1, arg2);
-        }
+        public static IArrowArray Add(IArrowArray arg1, Scalar arg2) => AddFunction.Execute(arg1, arg2);
+        public static IArrowArray Add(Scalar arg1, IArrowArray arg2) => AddFunction.Execute(arg1, arg2);
+        public static IArrowArray Add (IArrowArray arg1, IArrowArray arg2) => AddFunction.Execute(arg1, arg2);
+        
+        public static IArrowArray Divide(IArrowArray arg1, IArrowArray arg2) => DivideFunction.Execute(arg1, arg2);
+        public static IArrowArray Divide(Scalar arg1, IArrowArray arg2) => DivideFunction.Execute(arg1, arg2);
+        public static IArrowArray Divide(IArrowArray arg1, Scalar arg2) => DivideFunction.Execute(arg1, arg2);
 
-        public static IArrowArray Divide(IArrowArray arg1, IArrowArray arg2)
-        {
-            return DivideFunction.Execute(arg1, arg2);
-        }
+        public static IArrowArray Multiply(IArrowArray arg1, IArrowArray arg2) => MultiplyFunction.Execute(arg1, arg2);
+        public static IArrowArray Multiply(Scalar arg1, IArrowArray arg2) => MultiplyFunction.Execute(arg1, arg2);
+        public static IArrowArray Multiply(IArrowArray arg1, Scalar arg2) => MultiplyFunction.Execute(arg1, arg2);
 
-        public static IArrowArray Multiply(IArrowArray arg1, IArrowArray arg2)
-        {
-            return MultiplyFunction.Execute(arg1, arg2);
-        }
+        public static IArrowArray Subtract(IArrowArray arg1, IArrowArray arg2) => SubtractFunction.Execute(arg1, arg2);
+        public static IArrowArray Subtract(Scalar arg1, IArrowArray arg2) => SubtractFunction.Execute(arg1, arg2);
+        public static IArrowArray Subtract(IArrowArray arg1, Scalar arg2) => SubtractFunction.Execute(arg1, arg2);
 
-        public static IArrowArray Subtract(IArrowArray arg1, IArrowArray arg2)
-        {
-            return SubtractFunction.Execute(arg1, arg2);
-        }
-
-        public static IArrowArray Modulo(IArrowArray arg1, IArrowArray arg2)
-        {
-            return ModuloFunction.Execute(arg1, arg2);
-        }
+        public static IArrowArray Modulo(IArrowArray arg1, IArrowArray arg2) => ModuloFunction.Execute(arg1, arg2);
+        public static IArrowArray Modulo(Scalar arg1, IArrowArray arg2) => ModuloFunction.Execute(arg1, arg2);
+        public static IArrowArray Modulo(IArrowArray arg1, Scalar arg2) => ModuloFunction.Execute(arg1, arg2);
     }
 }
