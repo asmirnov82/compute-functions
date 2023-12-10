@@ -5,11 +5,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Gimpo.ComputeFunctions.Computation.Functions
+namespace Gimpo.ComputeFunctions.Computation.Functions.Arithmetic
 {
     internal class SubtractFunction : BinaryFunction<SubtractOperator>
     {
-        public SubtractFunction() : base("subtract")
+        private static readonly IFunction _function = new SubtractFunction();
+
+        public static IFunction Instance => _function;
+
+        private SubtractFunction() : base("subtract")
         {
         }
     }

@@ -9,135 +9,6 @@ namespace Gimpo.ComputeFunctions.Computation.Executors
 {
     internal static class BinaryOperatorExecutor
     {
-        private static void InvokeOperator<TBinaryOperator, TResult, TNumberDataProviderX, TNumberDataProviderY>(TNumberDataProviderX x, TNumberDataProviderY y, int length, ReadOnlySpan<byte> resultValidityBitmap, int nullCount, Span<TResult> destination)
-            where TBinaryOperator : struct, IBinaryOperator
-            where TResult : unmanaged, INumber<TResult>
-            where TNumberDataProviderX : struct, INumberDataProvider<TResult>
-            where TNumberDataProviderY : struct, INumberDataProvider<TResult>
-        {
-            ref var dRef = ref MemoryMarshal.GetReference(destination);
-
-            if (TBinaryOperator.SupportVectorization && (TBinaryOperator.CanRightArgumentBeZero || nullCount == 0) && TNumberDataProviderX.SupportVectorization && TNumberDataProviderY.SupportVectorization)
-            {
-                if (InvokeOperatorVectorized<TBinaryOperator, TResult, TNumberDataProviderX, TNumberDataProviderY>(x, y, length, ref dRef))
-                    return;
-            }
-
-            int i = 0;
-            if (nullCount == 0)
-                while (i < length)
-                {
-                    Unsafe.Add(ref dRef, i) = TBinaryOperator.Invoke(x.GetValue(i), y.GetValue(i));
-                    i++;
-                }
-            else
-                while (i < length)
-                {
-                    if (BitUtility.GetBit(resultValidityBitmap, i))
-                    {
-                        Unsafe.Add(ref dRef, i) = TBinaryOperator.Invoke(x.GetValue(i), y.GetValue(i));
-                    }
-                    i++;
-                }
-        }
-
-        private static bool InvokeOperatorVectorized<TBinaryOperator, TResult, TNumberVectorProviderX, TNumberVectorProviderY>(TNumberVectorProviderX x, TNumberVectorProviderY y, int length, ref TResult destination)
-            where TBinaryOperator : struct, IBinaryOperator
-            where TResult : unmanaged, INumber<TResult>
-            where TNumberVectorProviderX : struct, INumberVectorProvider<TResult>
-            where TNumberVectorProviderY : struct, INumberVectorProvider<TResult>
-        {
-#if NET8_0_OR_GREATER
-            if (Vector512.IsHardwareAccelerated && Vector512<TResult>.IsSupported)
-            {
-                int i = 0;
-                int vectorSize = Vector512<TResult>.Count;
-                int oneVectorFromEnd = length - vectorSize;
-                if (i <= oneVectorFromEnd)
-                {
-                    // Loop handling one vector at a time.
-                    do
-                    {
-                        TBinaryOperator.Invoke(x.LoadVector512Unsafe((uint)i), y.LoadVector512Unsafe((uint)i))
-                            .StoreUnsafe(ref destination, (uint)i);
-
-                        i += vectorSize;
-                    }
-                    while (i <= oneVectorFromEnd);
-
-                    // Handle any remaining elements with a final vector.
-                    if (i != length)
-                    {
-                        uint lastVectorIndex = (uint)oneVectorFromEnd;
-                        TBinaryOperator.Invoke(x.LoadVector512Unsafe(lastVectorIndex), y.LoadVector512Unsafe(lastVectorIndex))
-                            .StoreUnsafe(ref destination, lastVectorIndex);
-                    }
-
-                    return true;
-                }
-            }
-#endif
-            if (Vector256.IsHardwareAccelerated && Vector256<TResult>.IsSupported)
-            {
-                int i = 0;
-                int vectorSize = Vector256<TResult>.Count;
-                int oneVectorFromEnd = length - vectorSize;
-                if (i <= oneVectorFromEnd)
-                {
-                    // Loop handling one vector at a time.
-                    do
-                    {
-                        TBinaryOperator.Invoke(x.LoadVector256Unsafe((uint)i), y.LoadVector256Unsafe((uint)i))
-                            .StoreUnsafe(ref destination, (uint)i);
-
-                        i += vectorSize;
-                    }
-                    while (i <= oneVectorFromEnd);
-
-                    // Handle any remaining elements with a final vector.
-                    if (i != length)
-                    {
-                        uint lastVectorIndex = (uint)oneVectorFromEnd;
-                        TBinaryOperator.Invoke(x.LoadVector256Unsafe(lastVectorIndex), y.LoadVector256Unsafe(lastVectorIndex))
-                            .StoreUnsafe(ref destination, lastVectorIndex);
-                    }
-
-                    return true;
-                }
-            }
-
-            if (Vector128.IsHardwareAccelerated && Vector128<TResult>.IsSupported)
-            {
-                int i = 0;
-                int vectorSize = Vector128<TResult>.Count;
-                int oneVectorFromEnd = length - vectorSize;
-                if (i <= oneVectorFromEnd)
-                {
-                    // Loop handling one vector at a time.
-                    do
-                    {
-                        TBinaryOperator.Invoke(x.LoadVector128Unsafe((uint)i), y.LoadVector128Unsafe((uint)i))
-                            .StoreUnsafe(ref destination, (uint)i);
-
-                        i += vectorSize;
-                    }
-                    while (i <= oneVectorFromEnd);
-
-                    // Handle any remaining elements with a final vector.
-                    if (i != length)
-                    {
-                        uint lastVectorIndex = (uint)oneVectorFromEnd;
-                        TBinaryOperator.Invoke(x.LoadVector128Unsafe(lastVectorIndex), y.LoadVector128Unsafe(lastVectorIndex))
-                            .StoreUnsafe(ref destination, lastVectorIndex);
-                    }
-
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
         #region At least one argument is a Scalar
         internal unsafe static void InvokeOperator<TBinaryOperator, TResult>(ReadOnlySpan<TResult> array, TResult scalar, ReadOnlySpan<byte> resultValidityBitmap, int nullCount, Span<TResult> destination, bool reverseArguments = false)
             where TBinaryOperator : struct, IBinaryOperator
@@ -684,6 +555,137 @@ namespace Gimpo.ComputeFunctions.Computation.Executors
                     }
                     i++;
                 }
+        }
+        #endregion
+
+        #region Private Implementation
+        private static void InvokeOperator<TBinaryOperator, TResult, TNumberDataProviderX, TNumberDataProviderY>(TNumberDataProviderX x, TNumberDataProviderY y, int length, ReadOnlySpan<byte> resultValidityBitmap, int nullCount, Span<TResult> destination)
+            where TBinaryOperator : struct, IBinaryOperator
+            where TResult : unmanaged, INumber<TResult>
+            where TNumberDataProviderX : struct, INumberDataProvider<TResult>
+            where TNumberDataProviderY : struct, INumberDataProvider<TResult>
+        {
+            ref var dRef = ref MemoryMarshal.GetReference(destination);
+
+            if (TBinaryOperator.SupportVectorization && (TBinaryOperator.CanRightArgumentBeZero || nullCount == 0) && TNumberDataProviderX.SupportVectorization && TNumberDataProviderY.SupportVectorization)
+            {
+                if (InvokeOperatorVectorized<TBinaryOperator, TResult, TNumberDataProviderX, TNumberDataProviderY>(x, y, length, ref dRef))
+                    return;
+            }
+
+            int i = 0;
+            if (nullCount == 0)
+                while (i < length)
+                {
+                    Unsafe.Add(ref dRef, i) = TBinaryOperator.Invoke(x.GetValue(i), y.GetValue(i));
+                    i++;
+                }
+            else
+                while (i < length)
+                {
+                    if (BitUtility.GetBit(resultValidityBitmap, i))
+                    {
+                        Unsafe.Add(ref dRef, i) = TBinaryOperator.Invoke(x.GetValue(i), y.GetValue(i));
+                    }
+                    i++;
+                }
+        }
+
+        private static bool InvokeOperatorVectorized<TBinaryOperator, TResult, TNumberVectorProviderX, TNumberVectorProviderY>(TNumberVectorProviderX x, TNumberVectorProviderY y, int length, ref TResult destination)
+            where TBinaryOperator : struct, IBinaryOperator
+            where TResult : unmanaged, INumber<TResult>
+            where TNumberVectorProviderX : struct, INumberVectorProvider<TResult>
+            where TNumberVectorProviderY : struct, INumberVectorProvider<TResult>
+        {
+#if NET8_0_OR_GREATER
+            if (Vector512.IsHardwareAccelerated && Vector512<TResult>.IsSupported)
+            {
+                int i = 0;
+                int vectorSize = Vector512<TResult>.Count;
+                int oneVectorFromEnd = length - vectorSize;
+                if (i <= oneVectorFromEnd)
+                {
+                    // Loop handling one vector at a time.
+                    do
+                    {
+                        TBinaryOperator.Invoke(x.LoadVector512Unsafe((uint)i), y.LoadVector512Unsafe((uint)i))
+                            .StoreUnsafe(ref destination, (uint)i);
+
+                        i += vectorSize;
+                    }
+                    while (i <= oneVectorFromEnd);
+
+                    // Handle any remaining elements with a final vector.
+                    if (i != length)
+                    {
+                        uint lastVectorIndex = (uint)oneVectorFromEnd;
+                        TBinaryOperator.Invoke(x.LoadVector512Unsafe(lastVectorIndex), y.LoadVector512Unsafe(lastVectorIndex))
+                            .StoreUnsafe(ref destination, lastVectorIndex);
+                    }
+
+                    return true;
+                }
+            }
+#endif
+            if (Vector256.IsHardwareAccelerated && Vector256<TResult>.IsSupported)
+            {
+                int i = 0;
+                int vectorSize = Vector256<TResult>.Count;
+                int oneVectorFromEnd = length - vectorSize;
+                if (i <= oneVectorFromEnd)
+                {
+                    // Loop handling one vector at a time.
+                    do
+                    {
+                        TBinaryOperator.Invoke(x.LoadVector256Unsafe((uint)i), y.LoadVector256Unsafe((uint)i))
+                            .StoreUnsafe(ref destination, (uint)i);
+
+                        i += vectorSize;
+                    }
+                    while (i <= oneVectorFromEnd);
+
+                    // Handle any remaining elements with a final vector.
+                    if (i != length)
+                    {
+                        uint lastVectorIndex = (uint)oneVectorFromEnd;
+                        TBinaryOperator.Invoke(x.LoadVector256Unsafe(lastVectorIndex), y.LoadVector256Unsafe(lastVectorIndex))
+                            .StoreUnsafe(ref destination, lastVectorIndex);
+                    }
+
+                    return true;
+                }
+            }
+
+            if (Vector128.IsHardwareAccelerated && Vector128<TResult>.IsSupported)
+            {
+                int i = 0;
+                int vectorSize = Vector128<TResult>.Count;
+                int oneVectorFromEnd = length - vectorSize;
+                if (i <= oneVectorFromEnd)
+                {
+                    // Loop handling one vector at a time.
+                    do
+                    {
+                        TBinaryOperator.Invoke(x.LoadVector128Unsafe((uint)i), y.LoadVector128Unsafe((uint)i))
+                            .StoreUnsafe(ref destination, (uint)i);
+
+                        i += vectorSize;
+                    }
+                    while (i <= oneVectorFromEnd);
+
+                    // Handle any remaining elements with a final vector.
+                    if (i != length)
+                    {
+                        uint lastVectorIndex = (uint)oneVectorFromEnd;
+                        TBinaryOperator.Invoke(x.LoadVector128Unsafe(lastVectorIndex), y.LoadVector128Unsafe(lastVectorIndex))
+                            .StoreUnsafe(ref destination, lastVectorIndex);
+                    }
+
+                    return true;
+                }
+            }
+
+            return false;
         }
         #endregion
     }

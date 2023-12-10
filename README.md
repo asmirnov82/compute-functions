@@ -1,4 +1,6 @@
-# Gimpo Compute Functions
+# Introduction
+
+## Gimpo Compute Functions
 
 An implementation of Arrow Compute Functions targeting .NET 7.0 and .NET 8.0.
 
@@ -15,6 +17,12 @@ For example:
 ```C#
 IFunction function = Engine.GetFunctionByName("add");
 ```
+
+Several types of functions are currently supported:
+
+1. Aggregations (operate on a array and reduce the input to a single output value)
+
+2. Element-wise functions (accept both arrays and scalars as input and produce array of the same length as an output in case of at least on if the input parameter is a scalar or a single output value in case of all input parameters are scalars)
 
 ## Invoking functions
 
@@ -85,12 +93,20 @@ For example:
 | float, double     | double               |
 | float, float      | float                |
 
-## Element-wise binary functions
+# Functions
 
-All element-wise binary functions accept both arrays and scalars as input.
+## Aggregations
 
-Binary functions have the following semantics (which is sometimes called “broadcasting” in other systems such as Pandas):
+Scalar aggregations operate on an array and reduce the input to a single output value. The type of the output depends on Aggregation type. Most of the functions (like *min* and *max*) return the same type as the input type. Others (like *sum*) widen the type, so it's *int64* for all signed integers, *uint64* for all unsigned integers and *double* for all floating numbers (like *double*, *float* and *Half*).
+
+## Element-wise arithmetic functions
+
+All element-wise functions accept both arrays and scalars as input. These have the following semantics (which is sometimes called “broadcasting” in other systems such as Pandas):
+
+*(scalar, scalar)* inputs produce a scalar output (not implemented yet)
 
 *(array, array)* inputs produce an array output (and both inputs must be of the same length)
 
 *(scalar, array)* and *(array, scalar)* produce an array output. The scalar input is handled as if it were an array of the same length N as the other input, with the same value repeated N times.
+
+Arithmetic functions expect inputs of numeric type and apply a given arithmetic operation to each element(s) gathered from the input(s). If any of the input element(s) is null, the corresponding output element is null.

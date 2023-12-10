@@ -11,7 +11,6 @@ namespace Gimpo.ComputeFunctions.Computation.Operators
     internal readonly struct SubtractOperator : IBinaryOperator
     {
         public static bool SupportVectorization => true;
-
         public static bool CanRightArgumentBeZero => true;
         
         public static T Invoke<T>(T x, T y) where T : INumber<T>

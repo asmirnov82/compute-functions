@@ -15,6 +15,8 @@ namespace Gimpo.ComputeFunctions.Computation
         public int ArgumentCount => 2;
         public bool IsVariableArgumentCount => false;
 
+        public FunctionKind Kind => FunctionKind.Scalar;
+
         public BinaryFunction(string name)
         {
             _name = name;
@@ -108,13 +110,13 @@ namespace Gimpo.ComputeFunctions.Computation
         }
 
         /*
-        public static IArrowArray Execute(Scalar arg1, Scalar arg2)
+        public static Scalar Execute(Scalar arg1, Scalar arg2)
         {
             
             if (arg1.ValueType.TypeId == ArrowTypeId.Null || arg2.ValueType.TypeId == ArrowTypeId.Null)
-                return new NullArray(1);
+                return new NullScalar();
 
-            if (!arg1.IsNumeric)
+            if (!arg1.IsNumeric || !arg2.IsNumeric)
                 throw new NotSupportedException();
 
             var x = arg1;
@@ -126,10 +128,7 @@ namespace Gimpo.ComputeFunctions.Computation
 
         #region At least one argument is a Scalar
         private static IArrowArray Execute(Apache.Arrow.Array array, Scalar scalar, byte[] validityBitmap, bool reverseArguments = false)
-        {
-            if (!scalar.IsNumeric)
-                throw new NotSupportedException();
-
+        {            
             var length = array.Length;
             var nullCount = validityBitmap.Length == 0 ? 0 : length - BitUtility.CountBits(validityBitmap, 0, length);
 

@@ -22,6 +22,8 @@ namespace Gimpo.ComputeFunctions.Computation
         /// </summary>
         bool IsVariableArgumentCount { get; }
 
+        FunctionKind Kind { get; }
+
         /// <summary>
         /// Execute function.
         /// </summary>

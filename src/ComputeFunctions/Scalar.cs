@@ -17,7 +17,7 @@ namespace Gimpo.ComputeFunctions
     {
         #region Factory Methods
         public static Scalar Create(long value) => new NumericScalar<long>(value, Int64Type.Default);
-        public static Scalar Create(ulong value) => new NumericScalar<ulong>(value, Int64Type.Default);
+        public static Scalar Create(ulong value) => new NumericScalar<ulong>(value, UInt64Type.Default);
         public static Scalar Create(int value) => new NumericScalar<int>(value, Int32Type.Default);
         public static Scalar Create(uint value) => new NumericScalar<uint>(value, UInt32Type.Default);
         public static Scalar Create(short value) => new NumericScalar<short>(value, Int16Type.Default);
@@ -32,11 +32,11 @@ namespace Gimpo.ComputeFunctions
 
         public readonly IArrowType ValueType;
 
-        public object Value => GetValue();
+        public object? Value => GetValue();
 
         public abstract bool IsNumeric { get; }
 
-        protected abstract object GetValue();
+        protected abstract object? GetValue();
 
         protected Scalar (IArrowType valueType)
         {

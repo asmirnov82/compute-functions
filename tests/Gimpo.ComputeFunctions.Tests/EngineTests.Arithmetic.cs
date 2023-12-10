@@ -12,6 +12,7 @@ namespace Gimpo.ComputeFunctions.Tests
 {
     public partial class EngineTests
     {
+        #region Sum (as Widen Type Aggregation)
         [Fact]
         public void Test_ArithmeticsMultilplyWithNulls()
         {
@@ -63,5 +64,6 @@ namespace Gimpo.ComputeFunctions.Tests
             array.IsNull(2).Should().BeTrue(); // null / 1
             array.IsNull(3).Should().BeTrue(); // null / null
         }
+        #endregion
     }
 }

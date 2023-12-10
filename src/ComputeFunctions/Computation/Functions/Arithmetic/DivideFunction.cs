@@ -5,11 +5,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Gimpo.ComputeFunctions.Computation.Functions
+namespace Gimpo.ComputeFunctions.Computation.Functions.Arithmetic
 {
     internal class DivideFunction : BinaryFunction<DivideOperator>
     {
-        public DivideFunction() : base("divide")
+        private static readonly IFunction _function = new DivideFunction();
+
+        public static IFunction Instance => _function;
+
+        private DivideFunction() : base("divide")
         {
         }
     }

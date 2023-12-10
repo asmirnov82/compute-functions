@@ -5,11 +5,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Gimpo.ComputeFunctions.Computation.Functions
+namespace Gimpo.ComputeFunctions.Computation.Functions.Arithmetic
 {
     internal class MultiplyFunction : BinaryFunction<MultiplyOperator>
     {
-        public MultiplyFunction() : base("multiply")
+        private static readonly IFunction _function = new MultiplyFunction();
+
+        public static IFunction Instance => _function;
+
+        private MultiplyFunction() : base("multiply")
         {
         }
     }

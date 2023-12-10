@@ -1,6 +1,7 @@
 ﻿using Apache.Arrow;
 using Gimpo.ComputeFunctions.Computation;
-using Gimpo.ComputeFunctions.Computation.Functions;
+using Gimpo.ComputeFunctions.Computation.Functions.Aggregation;
+using Gimpo.ComputeFunctions.Computation.Functions.Arithmetic;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,14 +20,19 @@ namespace Gimpo.ComputeFunctions
 
         static Engine()
         {
-            //Register functions
-            RegisterFunction(new AddFunction());
-            RegisterFunction(new SubtractFunction());
-            RegisterFunction(new MultiplyFunction());
-            RegisterFunction(new DivideFunction());
-            RegisterFunction(new ModuloFunction());
+            //Register Arithmetic functions
+            RegisterFunction(AddFunction.Instance);
+            RegisterFunction(SubtractFunction.Instance);
+            RegisterFunction(MultiplyFunction.Instance);
+            RegisterFunction(DivideFunction.Instance);
+            RegisterFunction(ModuloFunction.Instance);
+
+            //Register Aggregation functions
+            RegisterFunction(SumFunction.Instance);
+            RegisterFunction(MaxFunction.Instance);
+            RegisterFunction(MinFunction.Instance);
         }
-               
+
         public static Datum CallFunction(string functionName, IReadOnlyList<Datum> args)
         {
             var function = GetFunctionByName(functionName);

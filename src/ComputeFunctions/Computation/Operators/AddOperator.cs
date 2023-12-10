@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace Gimpo.ComputeFunctions.Computation.Operators
 {
-    internal readonly struct AddOperator : IBinaryOperator
+    internal readonly struct AddOperator : IAggregationOperator
     {
         public static bool SupportVectorization => true;
-
         public static bool CanRightArgumentBeZero => true;
+        public static T GetIdentityValue<T>() where T : unmanaged, INumber<T>, IMinMaxValue<T> => T.AdditiveIdentity;
 
         public static T Invoke<T>(T x, T y) where T : INumber<T>
         {
@@ -33,6 +33,23 @@ namespace Gimpo.ComputeFunctions.Computation.Operators
         public static Vector512<T> Invoke<T>(Vector512<T> x, Vector512<T> y) where T : unmanaged, INumber<T>
         {
             return x + y;
+        }
+#endif
+
+        public static T Invoke<T>(Vector128<T> x) where T : unmanaged, INumber<T>
+        {
+            return Vector128.Sum(x);
+        }
+
+        public static T Invoke<T>(Vector256<T> x) where T : unmanaged, INumber<T>
+        {
+            return Vector256.Sum(x);
+        }
+
+#if NET8_0_OR_GREATER
+        public static T Invoke<T>(Vector512<T> x) where T : unmanaged, INumber<T>
+        {
+            return Vector512.Sum(x);
         }
 #endif
     }
