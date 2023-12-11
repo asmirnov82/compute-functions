@@ -30,48 +30,31 @@ Compute functions can be invoked by name using `public static Datum CallFunction
 
 For example:
 ```C#
+IArrowArray array1 = recordBatch.Column("ColumnName1");
+IArrowArray array2 = recordBatch.Column("ColumnName2");
+
 //Invoking by name
-var arg1 = new Datum(
-    new Int32Array.Builder()
-        .AppendRange(new[] { 0, 1, 2})
-        .Build());
+Datum result = Engine.CallFunction("add", new Datum[] {array1, array2});
 
-var arg2 = new Datum(
-    new Int32Array.Builder()
-        .AppendRange(new[] { 2, 1, 0 })
-        .Build());
-
-Datum result = Engine.CallFunction("add", new Datum[] {arg1, arg2});
-
-//Function lookup
+//Invoking by using function lookup
 IFunction function = Engine.GetFunctionByName("add");
 
-result = function.Execute(new Datum[] {arg1, arg2})
+result = function.Execute(new Datum[] {array1, array2})
 ```
 
 Many functions are also available directly as concrete APIs. 
 
 For example, 'Gimpo.ComputeFunctions.Engine.Add':
 ```C#
-var array1 = new Int32Array.Builder()
-                .AppendRange(new[] { 0, 1, 2 })
-                .Build();
-
-var array2 = new Int32Array.Builder()
-                .AppendRange(new[] { 0, 2, 1 })
-                .Build();
-
-IArrowArray = Engine.Add(array1, array2);
+IArrowArray result = Engine.Add(array1, array2);
 ```
 or
 ```C#
-var array1 = new Int32Array.Builder()
-                .AppendRange(new[] { 0, 1, 2 })
-                .Build();
+var array = recordBatch.Column("ColumnName");
 
 var scalar = Scalar.Create(32)
 
-IArrowArray = Engine.Add(array1, scalar);
+IArrowArray result = Engine.Add(array, scalar);
 ```
 
 ## Common numeric type
@@ -97,7 +80,15 @@ For example:
 
 ## Aggregations
 
-Scalar aggregations operate on an array and reduce the input to a single output value. The type of the output depends on Aggregation type. Most of the functions (like *min* and *max*) return the same type as the input type. Others (like *sum*) widen the type, so it's *int64* for all signed integers, *uint64* for all unsigned integers and *double* for all floating numbers (like *double*, *float* and *Half*).
+Scalar aggregations operate on an array and reduce the input to a single output value. The type of the output depends on the Aggregation type. Most of the functions (like *min* and *max*) return the same type as the input type. Others (like *sum*) widen the type, so it's *int64* for all signed integers, *uint64* for all unsigned integers and *double* for all floating numbers (like *double*, *float* and *Half*). Aggregation functions returns Scalar object, that allows to get store values of any type. To fetch value types values without being boxed, it's required to cast Scalar object to appropriate *NumericScalar<T>* type first.
+
+For sum calculation over column with name ":
+```C#
+Scalar result = Engine.Sum(array);
+
+object sum_with_boxing = result.Value;
+long sum_no_boxing = ((NumericScalar<long>)result.Scalar).Value;
+```
 
 ## Element-wise arithmetic functions
 
@@ -110,3 +101,17 @@ All element-wise functions accept both arrays and scalars as input. These have t
 *(scalar, array)* and *(array, scalar)* produce an array output. The scalar input is handled as if it were an array of the same length N as the other input, with the same value repeated N times.
 
 Arithmetic functions expect inputs of numeric type and apply a given arithmetic operation to each element(s) gathered from the input(s). If any of the input element(s) is null, the corresponding output element is null.
+
+For example, adding scalar double value to each element in an array of int: 
+
+```C#
+var array = new Int32Array.Builder()
+    .AppendRange(new int[] {1, 2, 3, 4})
+    .Build();
+
+var scalar = Scalar.Create(0.5);
+
+IArrowArray result = Engine.Add(array, scalar);
+```
+
+produces array of double *{1.5, 2.5, 3.5, 4.5}* as a result.

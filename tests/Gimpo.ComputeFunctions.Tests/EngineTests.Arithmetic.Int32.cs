@@ -671,6 +671,82 @@ namespace Gimpo.ComputeFunctions.Tests
         }
 
         [Theory]
+        [InlineData(new int[] { 0 }, 1.0 )]
+        [InlineData(new int[] { 1, -2, 3, 4, int.MaxValue, 33, int.MinValue, 128, 256 }, 0.5)]
+        public void Arithmetic_Int_Double_Scalar_WithoutNull_Test(int[] left, double right)
+        {
+            //Arrange
+            var arg1 = new Int32Array.Builder()
+                .AppendRange(left)
+                .Build();
+
+            var arg2 = Scalar.Create(right);
+
+            IArrowArray result;
+            DoubleArray array;
+
+            //Act Addition
+            result = Engine.Add(arg1, arg2);
+
+            //Assert
+            result.Data.DataType.TypeId.Should().Be(Apache.Arrow.Types.ArrowTypeId.Double);
+            result.Length.Should().Be(left.Length);
+
+            array = (DoubleArray)result;
+
+            for (int i = 0; i < array.Length; i++)
+                array.Values[i].Should().Be(left[i] + right);
+
+            //Act Subtraction
+            result = Engine.Subtract(arg1, arg2);
+
+            //Assert
+            result.Data.DataType.TypeId.Should().Be(Apache.Arrow.Types.ArrowTypeId.Double);
+            result.Length.Should().Be(left.Length);
+
+            array = (DoubleArray)result;
+
+            for (int i = 0; i < array.Length; i++)
+                array.Values[i].Should().Be(left[i] - right);
+
+            //Act Multiplication
+            result = Engine.Multiply(arg1, arg2);
+
+            //Assert
+            result.Data.DataType.TypeId.Should().Be(Apache.Arrow.Types.ArrowTypeId.Double);
+            result.Length.Should().Be(left.Length);
+
+            array = (DoubleArray)result;
+
+            for (int i = 0; i < array.Length; i++)
+                array.Values[i].Should().Be(left[i] * right);
+
+            //Act Division
+            result = Engine.Divide(arg1, arg2);
+
+            //Assert
+            result.Data.DataType.TypeId.Should().Be(Apache.Arrow.Types.ArrowTypeId.Double);
+            result.Length.Should().Be(left.Length);
+
+            array = (DoubleArray)result;
+
+            for (int i = 0; i < array.Length; i++)
+                array.Values[i].Should().Be(left[i] / right);
+
+            //Act Division
+            result = Engine.Modulo(arg1, arg2);
+
+            //Assert
+            result.Data.DataType.TypeId.Should().Be(Apache.Arrow.Types.ArrowTypeId.Double);
+            result.Length.Should().Be(left.Length);
+
+            array = (DoubleArray)result;
+
+            for (int i = 0; i < array.Length; i++)
+                array.Values[i].Should().Be(left[i] % right);
+        }
+
+        [Theory]
         [InlineData(new int[] { 0 }, new[] { 1.0f })]
         [InlineData(new int[] { 1, -2, 3, 4, int.MaxValue, 33, int.MinValue, 128, 256 }, new[] { 1.0f, 0.5f, 1.0f, 1.5f, 2.0f, 2.5f, 3.0f, 3.5f, 4.0f })]
         public void Arithmetic_Int_Float_WithoutNull_Test(int[] left, float[] right)
