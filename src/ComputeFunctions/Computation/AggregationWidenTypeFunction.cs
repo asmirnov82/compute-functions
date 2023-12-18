@@ -86,7 +86,7 @@ namespace Gimpo.ComputeFunctions.Computation
         private static TResult InvokeOperator<TResult>(Apache.Arrow.Array array)
             where TResult : unmanaged, INumber<TResult>, IMinMaxValue<TResult>
         {
-            return AggregationOperatorExecutor.InvokeOperator<TAggregationOperator, TResult>(((PrimitiveArray<TResult>)array).Values);
+            return AggregationOperatorExecutor.InvokeOperator<TAggregationOperator, TResult>(((PrimitiveArray<TResult>)array).Values, array.NullBitmapBuffer.Span, array.NullCount);
         }
 
         private static TResult InvokeOperator<TResult, T, TConverter>(Apache.Arrow.Array array)
@@ -94,7 +94,7 @@ namespace Gimpo.ComputeFunctions.Computation
             where T : unmanaged, INumber<T>
             where TConverter : unmanaged, IConverter<TResult, T>
         {
-            return AggregationOperatorExecutor.InvokeOperator<TAggregationOperator, TResult, T, TConverter>(((PrimitiveArray<T>)array).Values);
+            return AggregationOperatorExecutor.InvokeOperator<TAggregationOperator, TResult, T, TConverter>(((PrimitiveArray<T>)array).Values, array.NullBitmapBuffer.Span, array.NullCount);
         }
 
         private static TResult InvokeOperatorWithWidening<TResult, T, TWidener>(Apache.Arrow.Array array)
@@ -102,7 +102,7 @@ namespace Gimpo.ComputeFunctions.Computation
             where T : unmanaged, INumber<T>
             where TWidener : unmanaged, IWidener<TResult, T>
         {
-            return AggregationOperatorExecutor.InvokeOperatorWithWidening<TAggregationOperator, TResult, T, TWidener>(((PrimitiveArray<T>)array).Values);
+            return AggregationOperatorExecutor.InvokeOperatorWithWidening<TAggregationOperator, TResult, T, TWidener>(((PrimitiveArray<T>)array).Values, array.NullBitmapBuffer.Span, array.NullCount);
         }
 
         private static TResult InvokeOperatorWithWidening<TResult, TWidened, T, TConverter, TWidener>(Apache.Arrow.Array array)
@@ -112,7 +112,7 @@ namespace Gimpo.ComputeFunctions.Computation
             where TConverter : unmanaged, IConverter<TResult, TWidened>
             where TWidener : unmanaged, IWidener<TWidened, T>
         {
-           return AggregationOperatorExecutor.InvokeOperator<TAggregationOperator, TResult, TWidened, T, TConverter, TWidener>(((PrimitiveArray<T>)array).Values);
+           return AggregationOperatorExecutor.InvokeOperator<TAggregationOperator, TResult, TWidened, T, TConverter, TWidener>(((PrimitiveArray<T>)array).Values, array.NullBitmapBuffer.Span, array.NullCount);
         }
     }
 }

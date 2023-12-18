@@ -84,7 +84,8 @@ namespace Gimpo.ComputeFunctions.Computation
         private static TResult InvokeOperator<TResult>(Apache.Arrow.Array array)
             where TResult : unmanaged, INumber<TResult>, IMinMaxValue<TResult>
         {
-            return AggregationOperatorExecutor.InvokeOperator<TAggregationOperator,TResult>(((PrimitiveArray<TResult>)array).Values);
+            
+            return AggregationOperatorExecutor.InvokeOperator<TAggregationOperator,TResult>(((PrimitiveArray<TResult>)array).Values, array.NullBitmapBuffer.Span, array.NullCount);
         }
     }
 }

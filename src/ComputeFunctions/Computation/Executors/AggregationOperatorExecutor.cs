@@ -2,17 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics;
-using System.Text;
-using System.Threading.Tasks;
+using Apache.Arrow;
 
 namespace Gimpo.ComputeFunctions.Computation.Executors
 {
     internal class AggregationOperatorExecutor
     {
-        internal static TResult InvokeOperator<TAggregationOperator, TResult>(ReadOnlySpan<TResult> x)
+        internal static TResult InvokeOperator<TAggregationOperator, TResult>(ReadOnlySpan<TResult> x, ReadOnlySpan<byte> resultValidityBitmap, int nullCount)
             where TAggregationOperator : struct, IAggregationOperator
             where TResult : unmanaged, INumber<TResult>, IMinMaxValue<TResult>
         {
@@ -20,7 +18,7 @@ namespace Gimpo.ComputeFunctions.Computation.Executors
             var result = TAggregationOperator.GetIdentityValue<TResult>();
             int i = 0;
 
-            if (TAggregationOperator.SupportVectorization)
+            if (TAggregationOperator.SupportVectorization && nullCount == 0)
             {
 
 #if NET8_0_OR_GREATER
@@ -82,16 +80,23 @@ namespace Gimpo.ComputeFunctions.Computation.Executors
                 }
             }
 
-            // Aggregate the remaining items in the input span.
-            for (; (uint)i < (uint)x.Length; i++)
-            {
-                result = TAggregationOperator.Invoke(result, x[i]);
-            }
+            // Aggregate the remaining items in the input span
+            if (nullCount == 0)
+                for (; (uint)i < (uint)x.Length; i++)
+                {
+                    result = TAggregationOperator.Invoke(result, x[i]);
+                }
+            else
+                for (; (uint)i < (uint)x.Length; i++)
+                {
+                    if (BitUtility.GetBit(resultValidityBitmap, i))
+                        result = TAggregationOperator.Invoke(result, x[i]);
+                }
 
             return result;
         }
 
-        internal static TResult InvokeOperatorWithWidening<TAggregationOperator, TResult, T, TWidener>(ReadOnlySpan<T> x)
+        internal static TResult InvokeOperatorWithWidening<TAggregationOperator, TResult, T, TWidener>(ReadOnlySpan<T> x, ReadOnlySpan<byte> resultValidityBitmap, int nullCount)
             where TAggregationOperator : struct, IAggregationOperator
             where TResult : unmanaged, INumber<TResult>, IMinMaxValue<TResult>
             where T : unmanaged, INumber<T>
@@ -101,7 +106,7 @@ namespace Gimpo.ComputeFunctions.Computation.Executors
             var result = TAggregationOperator.GetIdentityValue<TResult>();
             int i = 0;
 
-            if (TAggregationOperator.SupportVectorization)
+            if (TAggregationOperator.SupportVectorization && nullCount == 0)
             {
 #if NET8_0_OR_GREATER
                 if (Vector512.IsHardwareAccelerated && Vector512<TResult>.IsSupported && x.Length >= Vector512<T>.Count)
@@ -174,16 +179,23 @@ namespace Gimpo.ComputeFunctions.Computation.Executors
                 }
             }
 
-            // Aggregate the remaining items in the input span.
-            for (; (uint)i < (uint)x.Length; i++)
-            {
-                result = TAggregationOperator.Invoke(result, TWidener.Widen(x[i]));
-            }
+            // Aggregate the remaining items in the input span
+            if (nullCount == 0)
+                for (; (uint)i < (uint)x.Length; i++)
+                {
+                    result = TAggregationOperator.Invoke(result, TWidener.Widen(x[i]));
+                }
+            else
+                for (; (uint)i < (uint)x.Length; i++)
+                {
+                    if (BitUtility.GetBit(resultValidityBitmap, i))
+                        result = TAggregationOperator.Invoke(result, TWidener.Widen(x[i]));
+                }
 
             return result;
         }
         
-        internal static TResult InvokeOperator<TAggregationOperator, TResult, TWidened, T, TConverter, TWidener>(ReadOnlySpan<T> x)
+        internal static TResult InvokeOperator<TAggregationOperator, TResult, TWidened, T, TConverter, TWidener>(ReadOnlySpan<T> x, ReadOnlySpan<byte> resultValidityBitmap, int nullCount)
             where TAggregationOperator : struct, IAggregationOperator
             where TResult : unmanaged, INumber<TResult>, IMinMaxValue<TResult>
             where TWidened : unmanaged, INumber<TWidened>
@@ -195,7 +207,7 @@ namespace Gimpo.ComputeFunctions.Computation.Executors
             var result = TAggregationOperator.GetIdentityValue<TResult>();
             int i = 0;
 
-            if (TAggregationOperator.SupportVectorization)
+            if (TAggregationOperator.SupportVectorization && TConverter.SupportVectorization && nullCount == 0)
             {
 #if NET8_0_OR_GREATER
                 if (Vector512.IsHardwareAccelerated && Vector512<T>.IsSupported && x.Length >= Vector512<T>.Count)
@@ -245,7 +257,7 @@ namespace Gimpo.ComputeFunctions.Computation.Executors
                     int oneVectorFromEnd = x.Length - vectorSize;
 
                     // Aggregate additional vectors into the result as long as there's at
-                    // least one full vector left to process.
+                    // least one full vector left to process
                     do
                     {
                         var (lower, upper) = TWidener.Widen(Vector128.LoadUnsafe(ref xRef, (uint)i));
@@ -260,16 +272,23 @@ namespace Gimpo.ComputeFunctions.Computation.Executors
                 }
             }
 
-            // Aggregate the remaining items in the input span.
-            for (; (uint)i < (uint)x.Length; i++)
-            {
-                result = TAggregationOperator.Invoke(result, TConverter.Convert(TWidener.Widen(x[i])));
-            }
+            // Aggregate the remaining items in the input span
+            if (nullCount == 0)
+                for (; (uint)i < (uint)x.Length; i++)
+                {
+                    result = TAggregationOperator.Invoke(result, TConverter.Convert(TWidener.Widen(x[i])));
+                }
+            else
+                for (; (uint)i < (uint)x.Length; i++)
+                {
+                    if (BitUtility.GetBit(resultValidityBitmap, i))
+                        result = TAggregationOperator.Invoke(result, TConverter.Convert(TWidener.Widen(x[i])));
+                }
 
             return result;
         }
 
-        internal static TResult InvokeOperator<TAggregationOperator, TResult, T, TConverter>(ReadOnlySpan<T> x)
+        internal static TResult InvokeOperator<TAggregationOperator, TResult, T, TConverter>(ReadOnlySpan<T> x, ReadOnlySpan<byte> resultValidityBitmap, int nullCount)
             where TAggregationOperator : struct, IAggregationOperator
             where TResult : unmanaged, INumber<TResult>, IMinMaxValue<TResult>
             where T : unmanaged, INumber<T>
@@ -277,11 +296,18 @@ namespace Gimpo.ComputeFunctions.Computation.Executors
         {
             var result = TAggregationOperator.GetIdentityValue<TResult>();
 
-            // Aggregate the remaining items in the input span.
-            for (int i = 0; (uint)i < (uint)x.Length; i++)
-            {
-                result = TAggregationOperator.Invoke(result, TConverter.Convert(x[i]));
-            }
+            // Aggregate the remaining items in the input span
+            if (nullCount == 0)
+                for (int i = 0; (uint)i < (uint)x.Length; i++)
+                {
+                    result = TAggregationOperator.Invoke(result, TConverter.Convert(x[i]));
+                }
+            else
+                for (int i = 0; (uint)i < (uint)x.Length; i++)
+                {
+                    if (BitUtility.GetBit(resultValidityBitmap, i))
+                        result = TAggregationOperator.Invoke(result, TConverter.Convert(x[i]));
+                }
 
             return result;
         }
