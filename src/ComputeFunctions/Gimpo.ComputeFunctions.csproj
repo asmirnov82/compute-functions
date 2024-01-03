@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Apache.Arrow" Version="14.0.1" />
+    <PackageReference Include="Apache.Arrow" Version="14.0.2" />
   </ItemGroup>
 
   <ItemGroup>
